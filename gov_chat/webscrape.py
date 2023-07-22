@@ -85,32 +85,12 @@ def scan(url):
 def main():
     links = scan(website)
 
-    urls = ''
-    for l in links:
-        urls += f"""
-    <url>
-      <loc>{l}</loc>
-      <lastmod>2022-07-27T02:24:08.242Z</lastmod>
-      <priority>0.6</priority>
-    </url>
-        """
-
-    xml = f"""
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    {urls}
-</urlset>
-    """
-
-    # f = open(out_file, 'w')
-    # f.write(xml)
-    # f.close()
     with open(out_file,"w") as fp:
         json.dump(links,fp)
 
 
 if __name__ == '__main__':
-    main()
+    # main()
 
 
 
@@ -129,4 +109,4 @@ if __name__ == '__main__':
             with open(Path(doc_dir,uuid.uuid4().hex+".json"),"w") as fp:
                 
                 json.dump(doc.json(),fp,default=str)
-        break
+        
