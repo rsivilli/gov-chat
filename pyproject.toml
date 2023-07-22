@@ -23,8 +23,15 @@ gpt4all = "^1.0.5"
 lxml = "^4.9.3"
 bs4 = "^0.0.1"
 html5lib = "^1.1"
+selenium = "^4.10.0"
+unstructured = "^0.8.1"
 
 
+
+
+[tool.poetry.group.splitandstore.dependencies]
+sentence-transformers = "^2.2.2"
+chromadb = "^0.4.2"
 
 [build-system]
 requires = ["poetry-core"]
