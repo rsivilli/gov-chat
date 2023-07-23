@@ -14,7 +14,9 @@ def split_and_load_docs(document_dir:str = " ./outputs/docs", chunk_size=500, ch
     docs = []
     for f in Path(document_dir).glob("*.json"):
         with open(f,"r") as fp:
-            doc = Document.parse_raw(load(fp))
+            tmp = load(fp)
+            print(tmp)
+            doc = Document.parse_raw(tmp)
             docs.append(doc)
     
 
