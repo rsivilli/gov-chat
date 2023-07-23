@@ -13,6 +13,7 @@ python-dotenv = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]
 librosa = "^0.10.0.post2"
+gradio = "^3.38.0"
 
 
 [tool.poetry.group.private-llm.dependencies]
