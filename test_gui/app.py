@@ -4,6 +4,10 @@ from gov_chat.splitandstore import split_and_load_docs
 from gov_chat.query_vs import interregate_vs
 from gov_chat.util import purge_directory
 from gov_chat.query_bot import ChatBot
+from langchain.vectorstores import Chroma
+def update_chatbot_collection(evt: gr.SelectData,chatbot:ChatBot):
+    chatbot.select_colleciton(evt.value)
+
 with gr.Blocks() as demo:
     with gr.Tab("1. Sitemap Generation"):
         website = gr.Text(label="Target Website")
@@ -41,18 +45,22 @@ with gr.Blocks() as demo:
         document_directory = gr.Text(value = "./outputs/docs",label="Document directory")
         chunk_size = gr.Number(value = 500, label="Chunk size")
         chunk_overlap = gr.Number(value = 0, label="Chunk overlap")
+        colleciton_name = gr.Text(value = Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME,label="Colleciton")
         split_and_store_button = gr.Button("Split and Store Documents")
         split_and_store_button.click(
             split_and_load_docs,inputs=[
-                document_directory,chunk_size,chunk_overlap
+                document_directory,chunk_size,chunk_overlap,colleciton_name
             ]
         )
     with gr.Tab("4. Query Vector Store"):
         gr.ChatInterface(interregate_vs)
-    with gr.Tab("4. Query Bot(GPU Required)"):
+    
+    with gr.Tab("4. Query Bot(GPU Required)") as test:
         chatbot = ChatBot()
-        gr.ChatInterface(chatbot.ask_bot)
+        colleciton_list = gr.Dropdown(chatbot.get_collections(),value=chatbot.get_collections()[0],label="Collection queried")
+        colleciton_list.select(chatbot.select_colleciton,inputs=[colleciton_list])
 
+        gr.ChatInterface(chatbot.ask_bot)
 
 
 

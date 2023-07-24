@@ -8,7 +8,7 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.embeddings import OpenAIEmbeddings
 
-def split_and_load_docs(document_dir:str = " ./outputs/docs", chunk_size=500, chunk_overlap=0)->list[Document]:
+def split_and_load_docs(document_dir:str = " ./outputs/docs", chunk_size=500, chunk_overlap=0,collection_name=None, clean_collection=True)->list[Document]:
     if Path(document_dir).exists is False:
         raise NameError(f"The specified directory {document_dir} does not exist")
     docs = []
@@ -25,8 +25,14 @@ def split_and_load_docs(document_dir:str = " ./outputs/docs", chunk_size=500, ch
 
 
     # Store 
-    vectorstore = Chroma.from_documents(documents=all_splits,embedding=HuggingFaceEmbeddings(),persist_directory="./chroma_store")
-    vectorstore.persist()
+    
+    db = Chroma(embedding_function=HuggingFaceEmbeddings(),persist_directory="./chroma_store",collection_name=collection_name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
+
+    if clean_collection:
+        db.delete_collection()
+        db = Chroma(embedding_function=HuggingFaceEmbeddings(),persist_directory="./chroma_store",collection_name=collection_name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
+    db.add_documents(all_splits)
+    db.persist()
 
 if __name__ == "__main__":
     split_and_load_docs()
