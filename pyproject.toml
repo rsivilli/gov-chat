@@ -37,6 +37,7 @@ chromadb = "^0.4.2"
 
 [tool.poetry.group.management-service.dependencies]
 django = "^4.2.3"
+psycopg2 = "^2.9.6"
 
 [build-system]
 requires = ["poetry-core"]
