@@ -34,6 +34,10 @@ unstructured = "^0.8.1"
 sentence-transformers = "^2.2.2"
 chromadb = "^0.4.2"
 
+
+[tool.poetry.group.management-service.dependencies]
+django = "^4.2.3"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
