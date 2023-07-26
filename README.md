@@ -28,3 +28,21 @@ Create a folder "models" and place the LLM there. Currently, only tested with `g
 ## Running Test GUI
 
 running the command `python ./test_gui/app.py` will spin up a service listening at http://127.0.0.1:7860. Click on the link or copy/paste into your browser
+
+
+## Current repo state
+
+
+|-- customer_management - primary logic and models around individual customers and their respective chatbots. Used primarily by django, but models and access mechanisms are used by some thigns in gov_chat
+|-- /frontend - teststub for js client and example implementation for a user facing chatbot
+|-- /gov_chat - broken out funcitonal components for all work around the actual chatbot and lifecycle therein
+|-- /gov_chat_management - base thing of django project
+|-- /test_gui - gradio project for testing that the individual steps in gov_chat worked in the proof of concept
+
+
+## TODO 
+
+ - [ ] create dockerfile for management
+ - [ ] update docker-compose to spin up django for management
+ - [ ] create dockerfiles for primary functions (eg sitemap-gen, site-indexing)
+ - [ ] migrate chat service to fastapi
