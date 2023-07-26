@@ -7,6 +7,11 @@ from langchain.embeddings import HuggingFaceEmbeddings
 
 from langchain.vectorstores import Chroma
 from langchain.embeddings import OpenAIEmbeddings
+import chromadb
+
+
+def get_chroma_client():
+    return chromadb.HttpClient()
 
 def split_and_load_docs(document_dir:str = " ./outputs/docs", chunk_size=500, chunk_overlap=0,collection_name=None, clean_collection=True)->list[Document]:
     if Path(document_dir).exists is False:
@@ -26,11 +31,11 @@ def split_and_load_docs(document_dir:str = " ./outputs/docs", chunk_size=500, ch
 
     # Store 
     
-    db = Chroma(embedding_function=HuggingFaceEmbeddings(),persist_directory="./chroma_store",collection_name=collection_name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
+    db = Chroma(embedding_function=HuggingFaceEmbeddings(),client=get_chroma_client(),collection_name=collection_name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
 
     if clean_collection:
         db.delete_collection()
-        db = Chroma(embedding_function=HuggingFaceEmbeddings(),persist_directory="./chroma_store",collection_name=collection_name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
+        db = Chroma(embedding_function=HuggingFaceEmbeddings(),client=get_chroma_client(),collection_name=collection_name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
     db.add_documents(all_splits)
     db.persist()
 

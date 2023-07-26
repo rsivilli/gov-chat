@@ -101,6 +101,8 @@ def generatre_site_map(target_domain:str, safety_count:int = 200, sitemap_dir=".
     )
     return links, len(links)
 
+
+
 def batch(iterable, n=1):
     l = len(iterable)
     for ndx in range(0, l, n):
@@ -108,7 +110,6 @@ def batch(iterable, n=1):
         
 def scan_sitemap(site_map_file:str,batch_count:int = 10, doc_directory="./outputs/docs"):
     urls:list[str] =[]
-    lookup = {}
     with open(site_map_file,"r") as fp:
         urls = json.load(fp)
     print(f"{len(urls)} urls loaded")
@@ -118,13 +119,10 @@ def scan_sitemap(site_map_file:str,batch_count:int = 10, doc_directory="./output
         #Selenium URLLoader doesn't support lazy_load so this basically grabs all pages into memory. We don't want to do that
         for doc in SeleniumURLLoader(urls=url).load():
             file_id =uuid.uuid4().hex
-            lookup[doc.metadata.get("source")] = file_id
             with open(Path(doc_directory,file_id+".json"),"w") as fp:
                 
                 json.dump(doc.json(),fp,default=str)
-    with open(Path(doc_directory,"..","lookup.json"),"w") as fp:
-        json.dump(lookup,fp)
-    return lookup
+    
     
 
 if __name__ == '__main__':
