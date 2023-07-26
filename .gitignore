@@ -3,3 +3,4 @@ models
 chroma_store
 
 __pycache__
+postgres-data
