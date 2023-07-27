@@ -18,6 +18,7 @@ gradio = "^3.38.0"
 
 [tool.poetry.group.private-llm.dependencies]
 gpt4all = "^1.0.5"
+uvicorn = {extras = ["standard"], version = "^0.23.1"}
 
 
 [tool.poetry.group.webcrawler.dependencies]

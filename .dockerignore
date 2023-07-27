@@ -1,0 +1,9 @@
+outputs
+models
+
+chroma_store
+postgres-data
+
+__pycache__
+
+deployments

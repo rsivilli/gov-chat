@@ -58,7 +58,7 @@ with gr.Blocks() as demo:
     with gr.Tab("4. Query Bot(GPU Required)") as test:
         chatbot = ChatBot()
         colleciton_list = gr.Dropdown(chatbot.get_collections(),value=chatbot.get_collections()[0],label="Collection queried")
-        colleciton_list.select(chatbot.select_colleciton,inputs=[colleciton_list])
+        colleciton_list.select(chatbot.select_collection,inputs=[colleciton_list])
 
         gr.ChatInterface(chatbot.ask_bot)
 

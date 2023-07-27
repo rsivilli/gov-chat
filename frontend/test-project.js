@@ -9,9 +9,9 @@ const inputForm = document.getElementById('input-form');
 const inputField = document.getElementById('input-field');
 
 document.addEventListener('DOMContentLoaded', function(){
-    govchat = new GovChat();
+    govchat = new GovChat("http://localhost:8001/chat/894e5bb1-73d0-4b46-b89e-d8fc0c661b4f");
    
-    inputForm.addEventListener('submit', function(event) {
+    inputForm.addEventListener('submit', async function(event) {
         // Prevent form submission
         event.preventDefault();
       
@@ -30,7 +30,8 @@ document.addEventListener('DOMContentLoaded', function(){
       
         // Generate chatbot response
     
-        const response = govchat.chat(input);
+        const response = await govchat.chat(input);
+      
         
       
         // Add chatbot response to conversation

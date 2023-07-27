@@ -7,11 +7,16 @@ from langchain.embeddings import HuggingFaceEmbeddings
 
 from langchain.vectorstores import Chroma
 from langchain.embeddings import OpenAIEmbeddings
+from os import environ
 import chromadb
 
 
 def get_chroma_client():
-    return chromadb.HttpClient()
+    return chromadb.HttpClient(
+        host=environ.get("VECTOR_STORE_HOST","localhost"),
+        port=environ.get("VECTOR_STORE_PORT", "8000")
+
+    )
 
 def split_and_load_docs(document_dir:str = " ./outputs/docs", chunk_size=500, chunk_overlap=0,collection_name=None, clean_collection=True)->list[Document]:
     if Path(document_dir).exists is False:
