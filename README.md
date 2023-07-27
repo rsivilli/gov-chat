@@ -8,8 +8,54 @@ A simple chatbot for answering questions about a website's content.
 - Configurable for either chatgpt or a privately hosted LLM
 - Provide a local test harness
 
+## Install LLM
 
-## Setup 
+Pick a model from the list [here](https://gpt4all.io/index.html)
+
+Create a folder "models" and place the LLM there. Currently, only tested with `ggml-gpt4all-j-v1.3-groovy.bin`
+
+## Demo/Test Setup
+
+- Install [docker compose] (https://docs.docker.com/compose/install/)
+- Install make if you don't already have it
+
+
+For the first install, you'll need to do a bit of bootstrapping
+
+Spin up postgres
+
+`docker compose up database`
+
+In a new terminal
+
+`make create_db`
+
+`make bootstrap_admin`
+
+Follow the prompts for creating your admin user
+
+That's it! You can close/kill the other terminals an in a new one (or one of the open ones) run
+`docker compose up`
+
+
+You'll now have a couple of "Sites" that you can reach 
+
+http://localhost:8888/admin/ is your customer management dashboard
+
+http://localhost:8080/ is an example js project for a chatbot. (This won't work yet without a scanned website)
+
+
+
+It is recommended that you start by creating a customer and associating a site with it through the dashboard. Once you've saved the customer and at least one site, run the following command to kick off the mapping job
+
+`make map_and_index`
+
+
+This is essentially running the same job that we'd tie to a timer or fire off on specific events. It will first walk all sites to generate sitemaps (assuming one wasn't provided or doesn't need to be updated). It will then index (scan contents, breakup and store) all the sites. There is some logic in the db to prevent us from scanning a particular site more than once a day currently. So you can rerun this as you add more sites. 
+
+
+
+## Dev Setup 
 
 The project is based in python and is managed by poetry. 
 
@@ -17,12 +63,6 @@ Install python 3.10 according to your operating system and following the instruc
 
 Once you have python and poetry installed, you should be able to run `poetry install` at the root of the repo and all dependencies will be grabbed. 
 
-
-## Install LLM
-
-Pick a model from the list [here](https://gpt4all.io/index.html)
-
-Create a folder "models" and place the LLM there. Currently, only tested with `ggml-gpt4all-j-v1.3-groovy.bin`
 
 
 ## Running Test GUI
@@ -42,7 +82,8 @@ running the command `python ./test_gui/app.py` will spin up a service listening 
 
 ## TODO 
 
- - [ ] create dockerfile for management
- - [ ] update docker-compose to spin up django for management
- - [ ] create dockerfiles for primary functions (eg sitemap-gen, site-indexing)
- - [ ] migrate chat service to fastapi
+ - [x] create dockerfile for management
+ - [x] update docker-compose to spin up django for management
+ - [x] create dockerfiles for primary functions (eg sitemap-gen, site-indexing)
+ - [x] migrate chat service to fastapi
+ - [ ] configure chatserver to use more info from management service and api
