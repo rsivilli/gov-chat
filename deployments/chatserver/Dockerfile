@@ -26,14 +26,17 @@ ENV PATH="${PATH}:${POETRY_VENV}/bin"
 
 WORKDIR /app
 
-# Install dependencies
-
-COPY ../. /app
+COPY ../../. /app
 RUN poetry install
 
+
+# This is required for chatserver
 RUN poetry run pip install torch --extra-index-url https://download.pytorch.org/whl/cu113
 
-COPY ../docker_entrypoint.sh /docker-entrypoint.sh
+# Install dependencies
+
+# waiter entry point
+COPY ../../docker_entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -51,7 +51,7 @@ It is recommended that you start by creating a customer and associating a site w
 `make map_and_index`
 
 
-This is essentially running the same job that we'd tie to a timer or fire off on specific events. It will first walk all sites to generate sitemaps (assuming one wasn't provided or doesn't need to be updated). It will then index (scan contents, breakup and store) all the sites. There is some logic in the db to prevent us from scanning a particular site more than once a day currently. So you can rerun this as you add more sites. 
+This is essentially running the same job that we'd tie to a timer or fire off on specific events. It will first walk all sites to generate sitemaps (assuming one wasn't provided or doesn't need to be updated). It will then index (scan contents, breakup and store) all the sites. There is some logic in the db to prevent us from scanning a particular site more than once a day currently. So you can rerun this as you add more sites. This has been having trouble with Windows. Alternatively, there is a service defined in the docker-compose that will do this job on startup or by runn `docker compose up scan_job`
 
 
 
