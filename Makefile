@@ -1,10 +1,10 @@
 .PHONY: create_db
 create_db:
-	python manage.py migrate
+	docker compose run customer_management  poetry run python manage.py migrate
 
 .PHONY: bootstrap_admin
 bootstrap_admin: 
-	python manage.py createsuperuser
+	docker compose run customer_management poetry run python manage.py createsuperuser
 
 .PHONY: map_and_index
 map_and_index:
