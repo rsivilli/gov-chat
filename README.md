@@ -80,6 +80,10 @@ running the command `python ./test_gui/app.py` will spin up a service listening 
 |-- /test_gui - gradio project for testing that the individual steps in gov_chat worked in the proof of concept
 
 
+## Architecture
+
+![Arch](images/govchat-arch.png)
+
 ## TODO 
 
  - [x] create dockerfile for management
