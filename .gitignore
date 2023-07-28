@@ -6,3 +6,4 @@ postgres-data
 
 __pycache__
 
+.env
