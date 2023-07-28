@@ -42,7 +42,6 @@ def split_and_load_docs(document_dir:str = " ./outputs/docs", chunk_size=500, ch
         db.delete_collection()
         db = Chroma(embedding_function=HuggingFaceEmbeddings(),client=get_chroma_client(),collection_name=collection_name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
     db.add_documents(all_splits)
-    db.persist()
 
 if __name__ == "__main__":
     split_and_load_docs()

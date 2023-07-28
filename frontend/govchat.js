@@ -9,21 +9,30 @@ class ChatMessage{
     }
 }
 class GovChat{
-    chat_url = "localhost:8001/chat/894e5bb1-73d0-4b46-b89e-d8fc0c661b4f";
+    chat_url = "localhost:8001/chat";
     session_id = self.crypto.randomUUID();
     site="localhost:8001/chat/894e5bb1-73d0-4b46-b89e-d8fc0c661b4f";
-    constructor(chat_url,site, welcome_message){
+    constructor(chat_url,site, welcome_message, chatbot_id,customer){
         this.chat_url = chat_url;
         this.site = site
         this.messages = [];
+        this.chatbot_id = chatbot_id;
+        this.customer = customer
         this.messages.push(
             new ChatMessage(welcome_message,"agent")
         )
     }
+    
 
     async chat(client_message){
         this.messages.push(new ChatMessage(client_message,"client"))
-        const res = await fetch(this.chat_url,  {body: JSON.stringify({question:client_message}),method: "POST",headers: {"Content-Type": "application/json",}});
+        const res = await fetch(this.chat_url+this.chatbot_id,  {
+            body: JSON.stringify({
+                question:client_message,
+                site:this.site,
+                customer:this.customer
+
+        }),method: "POST",headers: {"Content-Type": "application/json",}});
         const out = await res.json();
         this.messages.push(out);
 

@@ -114,14 +114,15 @@ def scan_sitemap(site_map_file:str,batch_count:int = 10, doc_directory="./output
         urls = json.load(fp)
     print(f"{len(urls)} urls loaded")
     os.makedirs(doc_directory,exist_ok=True)
-    
-    for url in batch(urls,int(batch_count)):
-        #Selenium URLLoader doesn't support lazy_load so this basically grabs all pages into memory. We don't want to do that
-        for doc in SeleniumURLLoader(urls=url).load():
+    for doc in SeleniumURLLoader(urls=urls).load():
             file_id =uuid.uuid4().hex
             with open(Path(doc_directory,file_id+".json"),"w") as fp:
                 
                 json.dump(doc.json(),fp,default=str)
+    # for url in batch(urls,int(batch_count)):
+    #     #Selenium URLLoader doesn't support lazy_load so this basically grabs all pages into memory. We don't want to do that
+        
+    #     break
     
     
 

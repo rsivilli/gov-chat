@@ -18,7 +18,7 @@ if not settings.configured:
 
 from customer_management.models import ChatbotConfig
 
-server_chatbot_id = ""
+server_chatbot_id = UUID(os.environ.get("CHATBOT_ID","e813ff23-7935-4dbe-8a79-5c1596154d5a"))
 collection = ""
 
 
@@ -43,9 +43,19 @@ app.add_middleware(
 )
 
 @app.post("/chat/{chatbot_id}")
-async def generate_chat_response( question:str = Body(), chatbot_id:UUID= Path(), chat_history:list[ChatMessage]=Body(default=[]))->ChatMessage:
-    # if chatbot_id != server_chatbot_id:
-    #     raise(HTTP_404_NOT_FOUND, f"Could not find chatbot with id {chatbot_id}")
+async def generate_chat_response( 
+    question:str = Body(), 
+    chatbot_id:UUID= Path(), 
+    chat_history:list[ChatMessage]=Body(default=[]),
+    site:str=Body(),customer:str=Body()
+    )->ChatMessage:
+    if chatbot_id != server_chatbot_id:
+        raise HTTPException(HTTP_404_NOT_FOUND, f"Could not find chatbot with id {chatbot_id}")
+    try:
+        chatbot.select_collection(site)
+    except ValueError as e:
+        raise HTTPException(HTTP_404_NOT_FOUND, f"Site {site} is not supported by this bot")
+
     message = chatbot.ask_bot(question,chat_history)
     return ChatMessage(message=message,role = "agent")
 
@@ -53,8 +63,7 @@ def initialize_chatbot():
     chat_config = ChatbotConfig.objects.get(pk=server_chatbot_id)
     if chat_config is None:
         raise ValueError(f"Could not find config for chatbot id {server_chatbot_id}")
-    chatbot.select_colleciton(colleciton="")
-
+    
 
 
 

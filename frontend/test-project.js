@@ -8,8 +8,13 @@ const conversation = document.getElementById('conversation');
 const inputForm = document.getElementById('input-form');
 const inputField = document.getElementById('input-field');
 
+const siteField = document.getElementById("site-field");
+const customerField = document.getElementById("customer-field");
+const chatbotField = document.getElementById("chatbot-field");
+
+
 document.addEventListener('DOMContentLoaded', function(){
-    govchat = new GovChat("http://localhost:8001/chat/894e5bb1-73d0-4b46-b89e-d8fc0c661b4f");
+    govchat = new GovChat("http://localhost:8001/chat/");
    
     inputForm.addEventListener('submit', async function(event) {
         // Prevent form submission
@@ -17,6 +22,13 @@ document.addEventListener('DOMContentLoaded', function(){
       
         // Get user input
         const input = inputField.value;
+        const site = siteField.value;
+        const customer = customerField.value;
+        const chatbot_id = chatbotField.value;
+
+        govchat.site = site;
+        govchat.customer = customer;
+        govchat.chatbot_id = chatbot_id;
       
         // Clear input field
         inputField.value = '';

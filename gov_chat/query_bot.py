@@ -3,6 +3,7 @@ from langchain.prompts import PromptTemplate
 from langchain.llms import GPT4All
 from langchain.llms.base import LLM
 from langchain.vectorstores import Chroma
+
 from langchain.embeddings import HuggingFaceEmbeddings
 
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
@@ -11,7 +12,7 @@ import chromadb
 from pydantic import BaseModel
 from .splitandstore import get_chroma_client
 
-model_path = "./models/ggml-gpt4all-j-v1.3-groovy.bin"
+model_path = "./models/ggml-model-gpt4all-falcon-q4_0.bin"
 class ChatBot:
     
     db:Chroma
@@ -38,9 +39,11 @@ class ChatBot:
     
         result = self.qa_chain({"query": query})
         print(result)
-        return result["result"]
+        return result["result"], [doc.metadata["source"] for doc in result["source_documents"] ]
     def select_collection(self,collection:str):
-        self.db =  Chroma(embedding_function=HuggingFaceEmbeddings(),client=get_chroma_client(),collection_name=colleciton)
+        chrome_client = get_chroma_client()
+        chrome_client.get_collection(collection)
+        self.db =  Chroma(embedding_function=HuggingFaceEmbeddings(),client=get_chroma_client(),collection_name=collection)
         self.qa_chain = RetrievalQA.from_chain_type(self.llm,
                                         retriever=self.db.as_retriever(),
                                         chain_type_kwargs={"prompt": self.QA_CHAIN_PROMPT},return_source_documents=True)

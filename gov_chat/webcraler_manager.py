@@ -103,15 +103,17 @@ def update_vs(base_site:str,chunk_size:int=500,chunk_overlap:int=0,clean_collect
          clean_collection=clean_collection,
          collection_name=root_name
          )
+    website.site_collection_name = root_name
+    website.save()
 
+if __name__ == "__main__":
+    for site in get_sitemap_targets():
+        generate_site_map(site.base_site)
 
-for site in get_sitemap_targets():
-    generate_site_map(site.base_site)
-
-updated = []
-for site in get_index_targets():
-    index_site(site.base_site)
-    update_vs(site.base_site)
+    updated = []
+    for site in get_index_targets():
+        index_site(site.base_site)
+        update_vs(site.base_site)
 
 
 
