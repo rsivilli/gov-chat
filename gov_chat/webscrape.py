@@ -107,7 +107,13 @@ def batch(iterable, n=1):
     l = len(iterable)
     for ndx in range(0, l, n):
         yield iterable[ndx:min(ndx + n, l)]   
-        
+def detect_pdfs(urls:list[str]):
+    pdf_urls = []
+    other_urls = []
+    for url in urls:
+        if url.endswith(".pdf"):
+            pass
+    
 def scan_sitemap(site_map_file:str,batch_count:int = 10, doc_directory="./outputs/docs"):
     urls:list[str] =[]
     with open(site_map_file,"r") as fp:

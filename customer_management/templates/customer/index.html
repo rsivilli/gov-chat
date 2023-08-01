@@ -1,0 +1,12 @@
+{% if customer_list %}
+    <ul>
+    {% for customer in customer_list %}
+        <li><a href="/customers/{{ customer.id }}/">{{ customer.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Customers are available.</p>
+{% endif %}
+
+{% load static %}
+<img src="{% static 'customer/R.png' %}" alt="My image">

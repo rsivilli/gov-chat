@@ -27,6 +27,7 @@ bs4 = "^0.0.1"
 html5lib = "^1.1"
 selenium = "^4.10.0"
 unstructured = "^0.8.1"
+selenium-wire = "^5.1.0"
 
 
 

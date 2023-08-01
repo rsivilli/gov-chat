@@ -1,0 +1,51 @@
+<h1>{{customer.name}}</h1>
+
+<h2>Websites</h2>
+{% for website in customer.website_set.all %}
+    <h3>{{website.base_site}}</h3>
+    
+    <p>
+        Doc Staging Location: {{website.site_doc_staging}}
+    </p>
+
+    <p>
+        Collection Name: {{website.site_collection_name}}
+    </p>
+    <p>
+        Sitemap Last Scanned: {{website.site_map_last_scanned}}
+    </p>
+    <p>
+        Site Last Indexed: {{website.site_last_indexed}}
+    </p>
+    <div class="chatbot-settings-container">
+        <input id="site-field" type="text" placeholder={{website.site_collection_name}}>
+        <input id="customer-field" type="text" placeholder={{customer.name}}>
+        <input id="chatbot-field" type="text" placeholder="chatbot_id">
+      </div>
+      <div class="chatbot-container">
+          <div id="header">
+              <h1>Chatbot</h1>
+          </div>
+          <div id="chatbot">
+              <div id="conversation">
+                <div class="chatbot-message">
+                  <p class="chatbot-text">Hi! 👋 it's great to see you!</p>
+                </div>
+              </div>
+              <form id="input-form">
+                <message-container>
+                  <input id="input-field" type="text" placeholder="Type your message here">
+                  <button id="submit-button" type="submit">
+                    <img class="send-icon" src="send-message.png" alt="">
+                  </button>
+                </message-container>
+                  
+              </form>
+          </div>  
+    
+      </div>
+      <script src="govchat.js"></script>
+      <script src="test-project.js"></script>
+{% endfor %}
+
+<a href="/customers">back</a>

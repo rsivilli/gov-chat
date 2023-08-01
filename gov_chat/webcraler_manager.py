@@ -40,8 +40,8 @@ def get_index_targets(time_delta_seconds:int = 3600*24):
     current_time = now()
     time_threshold = current_time - timedelta(seconds=time_delta_seconds)
     out = set()
-    out.update(Website.objects.filter(site_last_indexed=None ))
-    out.update(Website.objects.filter(site_last_indexed__lt=time_threshold ))
+    out.update(Website.objects.filter(site_last_indexed=None,site_map__isnull=False ))
+    out.update(Website.objects.filter(site_last_indexed__lt=time_threshold,site_map__isnull=False ))
     return out
 
 
@@ -70,7 +70,11 @@ def save_and_update_sitemap(base_site:str,sitemap:list[str], s3_bucket:str =None
 def index_site(base_site, batch_count:int=10, base_doc_directory="./outputs/docs"):
      website = Website.objects.filter(base_site=base_site).first()
      if website is None:
-            raise ValueError(f"Could not find website {base_site} in db")
+        raise ValueError(f"Could not find website {base_site} in db")
+     if website.site_map is None:
+        print(f"Warning: could not find sitemap for {base_site}")
+        return     
+    
      root_name = get_root_name(website)
      output_directory = Path(base_doc_directory,root_name)
      os.makedirs(output_directory, exist_ok=True)

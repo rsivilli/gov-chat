@@ -65,7 +65,7 @@ services:
       - index_data:/index_data
       - ./chroma_store:/db
   customer_management:
-    restart: on-failure:5
+    restart: always
     tty: true 
     networks:
       - gov_chat
@@ -82,6 +82,8 @@ services:
       - DATABASE_HOST=database
       - VECTOR_STORE_HOST=vectorstore
       - WAIT_FOR_SERVICES=database:5432 vectorstore:8000
+    volumes:
+      - ./customer_management:/app/customer_management
   scan_job:
     networks:
       - gov_chat
