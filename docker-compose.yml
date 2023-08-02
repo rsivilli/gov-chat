@@ -16,6 +16,7 @@ services:
     
     volumes:
       - ./models:/app/models/
+      - ./gov_chat:/app/gov_chat
     build: 
         context: .
         dockerfile: deployments/chatserver/Dockerfile
@@ -100,6 +101,8 @@ services:
       - WAIT_FOR_SERVICES=database:5432 vectorstore:8000
     volumes:
       - ./outputs:/app/outputs
+      - ./customer_management:/app/customer_management
+      - ./gov_chat:/app/gov_chat
     
 volumes:
   index_data:
