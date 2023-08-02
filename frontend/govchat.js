@@ -29,8 +29,7 @@ class GovChat{
         const res = await fetch(this.chat_url+this.chatbot_id,  {
             body: JSON.stringify({
                 question:client_message,
-                site:this.site,
-                customer:this.customer
+                collection:this.site,
 
         }),method: "POST",headers: {"Content-Type": "application/json",}});
         const out = await res.json();

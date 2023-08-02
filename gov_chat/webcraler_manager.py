@@ -79,7 +79,7 @@ def index_site(base_site, batch_count:int=10, base_doc_directory="./outputs/docs
      output_directory = Path(base_doc_directory,root_name)
      os.makedirs(output_directory, exist_ok=True)
      scan_sitemap(site_map_file=website.site_map,doc_directory=output_directory,batch_count=batch_count)
-     website.site_last_indexed = now()
+     
      website.site_doc_staging = output_directory.as_posix()
      website.save()
 
@@ -97,17 +97,14 @@ def update_vs(base_site:str,chunk_size:int=500,chunk_overlap:int=0,clean_collect
     website = Website.objects.filter(base_site=base_site).first()
     if website is None:
         raise ValueError(f"Could not find website {base_site} in db")
-    root_name = get_root_name(website)
-    
-    
+  
     split_and_load_docs(
-         document_dir=website.site_doc_staging,
-         chunk_overlap=chunk_overlap,
-         chunk_size=chunk_size,
-         clean_collection=clean_collection,
-         collection_name=root_name
-         )
-    website.site_collection_name = root_name
+        document_dir=website.site_doc_staging,
+        chunk_overlap=chunk_overlap,
+        chunk_size=chunk_size,
+        clean_collection=clean_collection,
+        collection_name=[site.name for site in website.target_collections.all()]
+        )
     website.save()
 
 if __name__ == "__main__":
@@ -118,6 +115,8 @@ if __name__ == "__main__":
     for site in get_index_targets():
         index_site(site.base_site)
         update_vs(site.base_site)
+        site.site_last_indexed = now()
+        site.save()
 
 
 

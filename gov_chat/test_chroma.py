@@ -8,6 +8,3 @@ client = get_chroma_client()
 
 print(client.list_collections())
 
-
-split_and_load_docs( collection_name="test-collection")
-

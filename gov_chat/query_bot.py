@@ -39,7 +39,7 @@ class ChatBot:
     
         result = self.qa_chain({"query": query})
         print(result)
-        return result["result"], [doc.metadata["source"] for doc in result["source_documents"] ]
+        return result["result"], set([doc.metadata["source"] for doc in result["source_documents"] ])
     def select_collection(self,collection:str):
         chrome_client = get_chroma_client()
         chrome_client.get_collection(collection)
@@ -66,5 +66,6 @@ class ChatBot:
 class ChatMessage(BaseModel):
     message:str
     role:str
+    sources:list[str]= []
 
 

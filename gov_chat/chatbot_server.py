@@ -9,6 +9,7 @@ from pydantic import BaseSettings
 from starlette.status import HTTP_404_NOT_FOUND
 from fastapi import HTTPException, Body, Path
 from fastapi.middleware.cors import CORSMiddleware
+from asgiref.sync import sync_to_async
 
 import os
 
@@ -18,8 +19,15 @@ if not settings.configured:
 
 from customer_management.models import ChatbotConfig
 
-server_chatbot_id = UUID(os.environ.get("CHATBOT_ID","e813ff23-7935-4dbe-8a79-5c1596154d5a"))
+server_chatbot_id = UUID(os.environ.get("CHATBOT_ID","318bd757-6c01-4f9b-b4a9-5128541dcf7a"))
 collection = ""
+
+
+def initialize_chatbot():
+    chat_config = ChatbotConfig.objects.get(pk=server_chatbot_id)
+    if chat_config is None:
+        raise ValueError(f"Could not find config for chatbot id {server_chatbot_id}")
+    return chat_config
 
 
 chatbot = ChatBot()
@@ -42,28 +50,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# chat_config = initialize_chatbot()
+# chatbot.set_template(chat_config.prompt_template)
+
+
 @app.post("/chat/{chatbot_id}")
 async def generate_chat_response( 
     question:str = Body(), 
     chatbot_id:UUID= Path(), 
     chat_history:list[ChatMessage]=Body(default=[]),
-    site:str=Body(),customer:str=Body()
+    collection:str=Body(default=None)
     )->ChatMessage:
-    if chatbot_id != server_chatbot_id:
-        raise HTTPException(HTTP_404_NOT_FOUND, f"Could not find chatbot with id {chatbot_id}")
     try:
-        chatbot.select_collection(site)
+        #TODO need to verify that chatbot has permission to this collection 
+        chatbot.select_collection(collection )
     except ValueError as e:
-        raise HTTPException(HTTP_404_NOT_FOUND, f"Site {site} is not supported by this bot")
+        raise HTTPException(HTTP_404_NOT_FOUND, f"Site {collection} is not supported by this bot")
 
-    message = chatbot.ask_bot(question,chat_history)
-    return ChatMessage(message=message,role = "agent")
-
-def initialize_chatbot():
-    chat_config = ChatbotConfig.objects.get(pk=server_chatbot_id)
-    if chat_config is None:
-        raise ValueError(f"Could not find config for chatbot id {server_chatbot_id}")
-    
+    message, sources = chatbot.ask_bot(question,chat_history)
+    return ChatMessage(message=message,role = "agent",sources=sources)
 
 
 

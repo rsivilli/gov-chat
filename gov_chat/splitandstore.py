@@ -21,27 +21,37 @@ def get_chroma_client():
 def split_and_load_docs(document_dir:str = " ./outputs/docs", chunk_size=500, chunk_overlap=0,collection_name=None, clean_collection=True)->list[Document]:
     if Path(document_dir).exists is False:
         raise NameError(f"The specified directory {document_dir} does not exist")
-    docs = []
+
+    if clean_collection:
+        if isinstance(collection_name,list):
+            for name in collection_name:
+                db = Chroma(embedding_function=HuggingFaceEmbeddings(),client=get_chroma_client(),collection_name=name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
+                db.delete_collection()
+        else:
+            db = Chroma(embedding_function=HuggingFaceEmbeddings(),client=get_chroma_client(),collection_name=collection_name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
+            db.delete_collection()
+
     for f in Path(document_dir).glob("*.json"):
         with open(f,"r") as fp:
             tmp = load(fp)
-            print(tmp)
             doc = Document.parse_raw(tmp)
-            docs.append(doc)
+            print(f"Indexing {doc.metadata.get('source')}")
     
 
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size = chunk_size, chunk_overlap = chunk_overlap)
-    all_splits = text_splitter.split_documents(docs)
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size = chunk_size, chunk_overlap = chunk_overlap)
+            all_splits = text_splitter.split_documents([doc])
+            ids = [f"{doc.metadata.get('source')}-{i}" for i in range(len(all_splits))]
+
+            # Store 
+            if isinstance(collection_name,list):
+                for name in collection_name:
+                    db = Chroma(embedding_function=HuggingFaceEmbeddings(),client=get_chroma_client(),collection_name=name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
+                    db.add_documents(all_splits,ids=ids)
 
 
-    # Store 
-    
-    db = Chroma(embedding_function=HuggingFaceEmbeddings(),client=get_chroma_client(),collection_name=collection_name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
-
-    if clean_collection:
-        db.delete_collection()
-        db = Chroma(embedding_function=HuggingFaceEmbeddings(),client=get_chroma_client(),collection_name=collection_name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
-    db.add_documents(all_splits)
+            else:
+                db = Chroma(embedding_function=HuggingFaceEmbeddings(),client=get_chroma_client(),collection_name=collection_name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
+                db.add_documents(all_splits,ids=ids)
 
 if __name__ == "__main__":
     split_and_load_docs()
