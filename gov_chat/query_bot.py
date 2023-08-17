@@ -1,6 +1,6 @@
 # Build prompt
 from langchain.prompts import PromptTemplate
-from langchain.llms import GPT4All
+from langchain.llms import GPT4All, OpenAI
 from langchain.llms.base import LLM
 from langchain.vectorstores import Chroma
 
@@ -12,7 +12,13 @@ import chromadb
 from pydantic import BaseModel
 from .splitandstore import get_chroma_client
 
+from enum import Enum
+
 model_path = "./models/ggml-model-gpt4all-falcon-q4_0.bin"
+
+class ChatBotBackend(str,Enum):
+    LOCAL_GPT4ALL = "GPT4ALL"
+    CHATGPT = "CHATGPT"
 class ChatBot:
     
     db:Chroma
@@ -24,12 +30,18 @@ class ChatBot:
     {context}
     Question: {question}
     Helpful Answer:"""
-    def __init__(self) -> None:
+    def __init__(self, backend_type:ChatBotBackend ) -> None:
         self.QA_CHAIN_PROMPT = PromptTemplate(input_variables=["context", "question"],template=self.template,)
         callbacks =  [StreamingStdOutCallbackHandler()]
-        print(f"Loading from {model_path}")
-    
-        self.llm = GPT4All(model=model_path, callbacks=callbacks, verbose=False)
+        self.backend_type = backend_type
+        if backend_type == ChatBotBackend.LOCAL_GPT4ALL:
+            print(f"Loading from {model_path}")
+            self.llm = GPT4All(model=model_path, callbacks=callbacks, verbose=False)
+        elif backend_type == ChatBotBackend.CHATGPT:
+            self.llm = OpenAI()
+        else:
+            raise ValueError(f"{backend_type} is not a supported backend type for chatbot")
+            
         self.db = Chroma(embedding_function=HuggingFaceEmbeddings(),client=get_chroma_client())
         
         self.qa_chain = RetrievalQA.from_chain_type(self.llm,

@@ -27,6 +27,8 @@ services:
       - DATABASE_HOST=database
       - VECTOR_STORE_HOST=vectorstore
       - WAIT_FOR_SERVICES=database:5432 vectorstore:8000
+      - "OPENAI_API_KEY=${OPENAI_API_KEY}"
+      - "MODEL_TYPE=${MODEL_TYPE}"
     command: poetry run uvicorn gov_chat.chatbot_server:app --port=8001 --host=0.0.0.0
     ports:
       - 8001:8001

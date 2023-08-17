@@ -30,7 +30,7 @@ def initialize_chatbot():
     return chat_config
 
 
-chatbot = ChatBot()
+chatbot = ChatBot(backend_type=os.getenv("MODEL_TYPE"))
 
 
 app = FastAPI()
