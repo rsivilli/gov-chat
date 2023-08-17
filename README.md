@@ -91,4 +91,4 @@ running the command `python ./test_gui/app.py` will spin up a service listening 
  - [x] create dockerfiles for primary functions (eg sitemap-gen, site-indexing)
  - [x] migrate chat service to fastapi
  - [ ] configure chatserver to use more info from management service and api
- - [ ] add support for chatgpt instead of local llm
+ - [x] add support for chatgpt instead of local llm
