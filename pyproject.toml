@@ -28,6 +28,7 @@ html5lib = "^1.1"
 selenium = "^4.10.0"
 unstructured = "^0.8.1"
 selenium-wire = "^5.1.0"
+pymupdf = "^1.22.5"
 
 
 
@@ -35,6 +36,7 @@ selenium-wire = "^5.1.0"
 [tool.poetry.group.splitandstore.dependencies]
 sentence-transformers = "^2.2.2"
 chromadb = "^0.4.2"
+tqdm = "^4.66.1"
 
 
 [tool.poetry.group.management-service.dependencies]

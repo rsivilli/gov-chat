@@ -4,7 +4,7 @@ import logging
 from typing import TYPE_CHECKING, List, Literal, Optional, Union
 
 if TYPE_CHECKING:
-    from seleniumwire.webdriver import Firefox, Chrome 
+    from selenium.webdriver import Chrome, Firefox
 
 
 from langchain.docstore.document import Document
@@ -72,7 +72,7 @@ class SeleniumURLLoader(BaseLoader):
             Union[Chrome, Firefox]: A WebDriver instance for the specified browser.
         """
         if self.browser.lower() == "chrome":
-            from seleniumwire.webdriver import Chrome, ChromeOptions
+            from selenium.webdriver import Chrome, ChromeOptions
 
 
             chrome_options = ChromeOptions()
@@ -98,7 +98,7 @@ class SeleniumURLLoader(BaseLoader):
                 return Chrome(options=chrome_options)
             return Chrome(executable_path=self.executable_path, options=chrome_options)
         elif self.browser.lower() == "firefox":
-            from seleniumwire.webdriver import Firefox, FirefoxOptions
+            from selenium.webdriver import Firefox, FirefoxOptions
             
 
             firefox_options = FirefoxOptions()
@@ -131,7 +131,7 @@ class SeleniumURLLoader(BaseLoader):
         
         
         for url in self.urls:
-            # try:
+            try:
                 driver.get(url)
                 for request in driver.requests:
                     if request.response:
@@ -156,11 +156,13 @@ class SeleniumURLLoader(BaseLoader):
                 driver.switch_to.frame(driver.find_element(By.CSS_SELECTOR, 'body > embed'))
                 print(driver.print_page())
                 docs.append(Document(page_content=text, metadata=metadata))
-            # except Exception as e:
-                # if self.continue_on_failure:
-                #     logger.error(f"Error fetching or processing {url}, exception: {e}")
-                # else:
-                #     raise e
+            except Exception as e:
+                if self.continue_on_failure:
+                    logger.error(f"Error fetching or processing {url}, exception: {e}")
+                    driver = self._get_driver()
+                else:
+                    raise e
+                
 
         driver.quit()
         return docs

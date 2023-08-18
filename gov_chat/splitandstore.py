@@ -10,6 +10,8 @@ from langchain.embeddings import OpenAIEmbeddings
 from os import environ
 import chromadb
 
+from tqdm import tqdm
+
 
 def get_chroma_client():
     return chromadb.HttpClient(
@@ -31,7 +33,7 @@ def split_and_load_docs(document_dir:str = " ./outputs/docs", chunk_size=500, ch
             db = Chroma(embedding_function=HuggingFaceEmbeddings(),client=get_chroma_client(),collection_name=collection_name or Chroma._LANGCHAIN_DEFAULT_COLLECTION_NAME)
             db.delete_collection()
 
-    for f in Path(document_dir).glob("*.json"):
+    for f in tqdm(Path(document_dir).glob("*.json")):
         with open(f,"r") as fp:
             tmp = load(fp)
             doc = Document.parse_raw(tmp)
@@ -39,8 +41,12 @@ def split_and_load_docs(document_dir:str = " ./outputs/docs", chunk_size=500, ch
     
 
             text_splitter = RecursiveCharacterTextSplitter(chunk_size = chunk_size, chunk_overlap = chunk_overlap)
+            page = doc.metadata.get("page")
             all_splits = text_splitter.split_documents([doc])
-            ids = [f"{doc.metadata.get('source')}-{i}" for i in range(len(all_splits))]
+            if page is not None:
+                ids = [f"{doc.metadata.get('source')}-{page}-{i}" for i in range(len(all_splits))]
+            else:
+                ids = [f"{doc.metadata.get('source')}-{i}" for i in range(len(all_splits))]
 
             # Store 
             if isinstance(collection_name,list):

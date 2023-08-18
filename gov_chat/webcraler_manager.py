@@ -13,7 +13,7 @@ import re
 
 from pathlib import Path
 
-from webscrape import save_site_map, SiteScanner, scan_sitemap
+from webscrape import save_site_map, SiteScanner, scan_sitemap, scan_downloaded_artifacts
 
 from splitandstore import split_and_load_docs
 
@@ -80,7 +80,9 @@ def index_site(base_site, batch_count:int=10, base_doc_directory="./outputs/docs
      os.makedirs(output_directory, exist_ok=True)
      scan_sitemap(site_map_file=website.site_map,doc_directory=output_directory,batch_count=batch_count)
      
+     scan_downloaded_artifacts(doc_directory=output_directory.as_posix())
      website.site_doc_staging = output_directory.as_posix()
+     
      website.save()
 
 def generate_site_map(target_domain:str, safety_count:int=200, sitemap_dir="./outputs"):
